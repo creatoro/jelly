@@ -18,13 +18,13 @@ abstract class Jelly_Core_Field_Serialized extends Jelly_Field {
 	 *
 	 * Incoming data that isn't actually serialized will not be harmed.
 	 *
-	 * @param   mixed  value
+	 * @param   mixed  $value
 	 * @return  mixed
 	 */
 	public function set($value)
 	{
 		list($value, $return) = $this->_default($value);
-		
+
 		if ( ! $return)
 		{
 		 	if (($new_value = @unserialize($value)) !== FALSE)
@@ -32,16 +32,17 @@ abstract class Jelly_Core_Field_Serialized extends Jelly_Field {
 				$value = $new_value;
 			}
 		}
-		
+
 		return $value;
 	}
 
 	/**
 	 * Saves the value as a serialized string.
 	 *
-	 * @param   Jelly   model
-	 * @param   mixed   value
-	 * @return  string
+	 * @param   Jelly_Model  $model
+	 * @param   mixed        $value
+	 * @param   boolean      $loaded
+	 * @return  null|string
 	 */
 	public function save($model, $value, $loaded)
 	{
@@ -49,7 +50,7 @@ abstract class Jelly_Core_Field_Serialized extends Jelly_Field {
 		{
 			return NULL;
 		}
-		
+
 		return @serialize($value);
 	}
 

@@ -2,12 +2,12 @@
 /**
  * Handles file uploads.
  *
- * Since this field is ultimately just a varchar in the database, it 
+ * Since this field is ultimately just a varchar in the database, it
  * doesn't really make sense to put rules like Upload::valid or Upload::type
  * on the validation object; if you ever want to NULL out the field, the validation
  * will fail!
- * 
- * As such, these 
+ *
+ * As such, these
  *
  * @package    Jelly
  * @author     Jonathan Geiger
@@ -20,12 +20,12 @@ abstract class Jelly_Core_Field_File extends Jelly_Field implements Jelly_Field_
 	 * @var  boolean  whether or not to delete the old file when a new file is added
 	 */
 	public $delete_old_file = TRUE;
-	
+
 	/**
 	 * @var  string  the path to save the file in
 	 */
 	public $path = NULL;
-	
+
 	/**
 	 * @var  array  valid types for the file
 	 */
@@ -35,16 +35,16 @@ abstract class Jelly_Core_Field_File extends Jelly_Field implements Jelly_Field_
 	 * @var  string  the filename that will be saved
 	 */
 	protected $_filename;
-	
+
 	/**
 	 * Ensures there is a path for saving set.
 	 *
-	 * @param  array  options
+	 * @param  array  $options
 	 */
 	public function __construct($options = array())
 	{
 		parent::__construct($options);
-		
+
 		// Set the path
 		$this->path = $this->_check_path($this->path);
 	}
@@ -52,6 +52,9 @@ abstract class Jelly_Core_Field_File extends Jelly_Field implements Jelly_Field_
 	/**
 	 * Adds a rule that uploads the file.
 	 *
+	 * @param   Jelly_Model  $model
+	 * @param   string       $column
+	 * @return void
 	 */
 	public function initialize($model, $column)
 	{
@@ -64,9 +67,9 @@ abstract class Jelly_Core_Field_File extends Jelly_Field implements Jelly_Field_
 	/**
 	 * Implementation for Jelly_Field_Supports_Save.
 	 *
-	 * @param   Jelly_Model  model
-	 * @param   mixed        value
-	 * @param   boolean      key
+	 * @param   Jelly_Model  $model
+	 * @param   mixed        $value
+	 * @param   boolean      $loaded
 	 * @return  void
 	 */
 	public function save($model, $value, $loaded)
@@ -78,9 +81,9 @@ abstract class Jelly_Core_Field_File extends Jelly_Field implements Jelly_Field_
 	 * Logic to deal with uploading the image file and generating thumbnails according to
 	 * what has been specified in the $thumbnails array.
 	 *
-	 * @param   Validation
-	 * @param   Jelly_Model
-	 * @param   Jelly_Field
+	 * @param   Validation   $validation
+	 * @param   Jelly_Model  $model
+	 * @param   Jelly_Field  $field
 	 * @return  bool
 	 */
 	public function _upload(Validation $validation, $model, $field)
@@ -132,10 +135,10 @@ abstract class Jelly_Core_Field_File extends Jelly_Field implements Jelly_Field_
 			{
 				$value = trim($value, '/');
 			}
-			
+
 			// Garbage collect
 			$this->_delete_old_file($model->original($this->name), $this->path);
-			
+
 			// Set the saved filename
 			$this->_filename = $value;
 		}
@@ -146,16 +149,16 @@ abstract class Jelly_Core_Field_File extends Jelly_Field implements Jelly_Field_
 
 			return FALSE;
 		}
-		
+
 		return TRUE;
 	}
-	
+
 	/**
 	 * Checks that a given path exists and is writable and that it has a trailing slash.
 	 *
 	 * (pulled out into a method so that it can be reused easily by image subclass)
 	 *
-	 * @param   path
+	 * @param   string  $path
 	 * @return  string  the path - making sure it has a trailing slash
 	 */
 	protected function _check_path($path)
@@ -172,15 +175,15 @@ abstract class Jelly_Core_Field_File extends Jelly_Field implements Jelly_Field_
 		{
 			throw new Kohana_Exception(get_class($this).' must have a `path` property set that points to a writable directory');
 		}
-		
+
 		return $path;
 	}
-	
+
 	/**
 	 * Deletes the previously used file if necessary.
 	 *
-	 * @param   string  filename
-	 * @param   string  path
+	 * @param   string  $filename
+	 * @param   string  $path
 	 * @return  void
 	 */
 	protected function _delete_old_file($filename, $path)
@@ -190,7 +193,7 @@ abstract class Jelly_Core_Field_File extends Jelly_Field implements Jelly_Field_
 		{
 			// Set the file path
 			$path = $path.$filename;
-			
+
 			// Check if file exists
 			if (file_exists($path))
 			{

@@ -15,27 +15,27 @@ abstract class Jelly_Core_Field_Primary extends Jelly_Field {
 	 * @var  boolean  defaults primary keys to primary
 	 */
 	public $primary = TRUE;
-	
+
 	/**
 	 * @var  boolean  default to converting empty values to NULL so keys are auto-incremented properly
 	 */
 	public $allow_null = TRUE;
-	
+
 	/**
 	 * @var  int  default is NULL
 	 */
 	public $default = NULL;
-	
+
 	/**
-	 * Ensures allow_null is not set to FALSE on the field, as it prevents 
+	 * Ensures allow_null is not set to FALSE on the field, as it prevents
 	 * proper auto-incrementing of a primary key.
 	 *
-	 * @param   array  options
+	 * @param  array  $options
 	 */
 	public function __construct($options = array())
 	{
 		parent::__construct($options);
-		
+
 		// Ensure allow_null is TRUE
 		if ( ! $this->allow_null)
 		{
@@ -47,19 +47,19 @@ abstract class Jelly_Core_Field_Primary extends Jelly_Field {
 	/**
 	 * Converts numeric IDs to ints.
 	 *
-	 * @param   mixed  value
-	 * @return  int | string
+	 * @param   mixed  $value
+	 * @return  int|string
 	 */
 	public function set($value)
 	{
 		list($value, $return) = $this->_default($value);
-		
+
 		// Allow only strings and integers as primary keys
 		if ( ! $return)
 		{
 			$value = is_numeric($value) ? (int) $value : (string) $value;
 		}
-		
+
 		return $value;
 	}
 

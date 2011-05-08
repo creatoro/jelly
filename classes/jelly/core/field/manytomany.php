@@ -2,9 +2,9 @@
 
 /**
  * Handles many to many relationships.
- * 
+ *
  * With many-to-many relationships there is a "through" table that
- * connects the two models. 
+ * connects the two models.
  *
  * @package    Jelly
  * @author     Jonathan Geiger
@@ -17,44 +17,44 @@ abstract class Jelly_Core_Field_ManyToMany extends Jelly_Field implements Jelly_
 	 * @var  boolean  false, since this field does not map directly to a column
 	 */
 	public $in_db = FALSE;
-	
+
 	/**
 	 * @var  boolean  null values are not allowed since an empty array expresses no relationships
 	 */
 	public $allow_null = FALSE;
-	
+
 	/**
 	 * @var  array  default is an empty array
 	 */
 	public $default = array();
-	
+
 	/**
 	 * @var  string  a string containing the name of the model and (optionally)
 	 *               the field of the model we're connecting.
 	 */
 	public $foreign = '';
-	
+
 	/**
 	 * @var mixed  a string or array that references the through table and
 	 *             fields we're using to connect the two models.
 	 */
 	public $through = '';
-	
+
 	/**
 	 * @var  boolean  empty values are converted by default
 	 */
 	public $convert_empty = TRUE;
-	
+
 	/**
 	 * @var  int  empty values are converted to array(), not NULL
 	 */
 	public $empty_value = array();
-	
+
 	/**
 	 * Sets up foreign and through properly.
 	 *
-	 * @param   string  model
-	 * @param   string  column
+	 * @param   string  $model
+	 * @param   string  $column
 	 * @return  void
 	 */
 	public function initialize($model, $column)
@@ -75,7 +75,7 @@ abstract class Jelly_Core_Field_ManyToMany extends Jelly_Field implements Jelly_
 		if ( ! is_array($this->foreign))
 		{
 			$this->foreign = array_combine(array('model', 'field'), explode('.', $this->foreign));
-		}	
+		}
 
 		// Create the default through connection
 		if (empty($this->through) OR is_string($this->through))
@@ -108,26 +108,26 @@ abstract class Jelly_Core_Field_ManyToMany extends Jelly_Field implements Jelly_
 	/**
 	 * Sets a value on the field.
 	 *
-	 * @param   mixed  value
+	 * @param   mixed  $value
 	 * @return  array
 	 */
 	public function set($value)
 	{
 		list($value, $return) = $this->_default($value);
-		
+
 		if ( ! $return)
 		{
 			$value = $this->_ids($value);
 		}
-		
+
 		return $value;
 	}
 
 	/**
 	 * Returns a Jelly_Builder that can be selected, updated, or deleted.
 	 *
-	 * @param   Jelly_Model    model
-	 * @param   mixed          value
+	 * @param   Jelly_Model    $model
+	 * @param   mixed          $value
 	 * @return  Jelly_Builder
 	 */
 	public function get($model, $value)
@@ -145,16 +145,15 @@ abstract class Jelly_Core_Field_ManyToMany extends Jelly_Field implements Jelly_
 	/**
 	 * Implementation for Jelly_Field_Supports_Save.
 	 *
-	 * @param   Jelly_Model  model
-	 * @param   mixed        value
-	 * @param   boolean      key
-	 * @return  void
+	 * @param   Jelly_Model  $model
+	 * @param   mixed        $value
+	 * @param   boolean      $loaded
 	 */
 	public function save($model, $value, $loaded)
 	{
 		// Don't do anything on insert when we don't have anything
 		if ( ! $loaded AND empty($value)) return;
-		
+
 		// Find all current records so that we can calculate what's changed
 		$in = ($loaded) ? $this->_in($model, TRUE) : array();
 
@@ -183,8 +182,8 @@ abstract class Jelly_Core_Field_ManyToMany extends Jelly_Field implements Jelly_
 	/**
 	 * Implementation of Jelly_Field_Supports_Has.
 	 *
-	 * @param   Jelly_Model  model
-	 * @param   mixed        models
+	 * @param   Jelly_Model  $model
+	 * @param   mixed        $models
 	 * @return  boolean
 	 */
 	public function has($model, $models)
@@ -198,7 +197,7 @@ abstract class Jelly_Core_Field_ManyToMany extends Jelly_Field implements Jelly_
 		{
 			$in = $this->_ids($model->__get($this->name));
 		}
-		
+
 		$ids = $this->_ids($models);
 
 		// If ids is an empty array then the supplied models were invalid
@@ -215,13 +214,13 @@ abstract class Jelly_Core_Field_ManyToMany extends Jelly_Field implements Jelly_
 
 		return TRUE;
 	}
-	
+
 	/**
 	 * Returns either an array or unexecuted query to find
 	 * which columns the model is "in" in the join table.
 	 *
-	 * @param   Jelly    model
-	 * @param   boolean  as_array
+	 * @param   Jelly_Model  $model
+	 * @param   boolean      $as_array
 	 * @return  mixed
 	 */
 	protected function _in($model, $as_array = FALSE)

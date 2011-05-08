@@ -30,7 +30,6 @@ class Jelly_Core_Validation_Exception extends Kohana_Exception {
 	 * @param  string     $message     The error message
 	 * @param  array      $values      The array of values for the error message
 	 * @param  integer    $code        The error code for the exception
-	 * @return void
 	 */
 	public function __construct($object_name, Validation $object, $message = 'Failed to validate array', array $values = NULL, $code = 0)
 	{

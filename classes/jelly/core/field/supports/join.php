@@ -18,7 +18,7 @@ interface Jelly_Core_Field_Supports_Join {
 	 *
 	 * For examples, check out belongsTo and HasOne's implementations.
 	 *
-	 * @param   Jelly_Builder  builder
+	 * @param   Jelly_Builder  $builder
 	 * @return  void
 	 */
 	public function join(Jelly_Builder $builder);

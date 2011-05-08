@@ -34,7 +34,7 @@ abstract class Jelly_Core_Field_Slug extends Jelly_Field_String {
 	/**
 	 * Converts a slug to value valid for a URL.
 	 *
-	 * @param    mixed  value
+	 * @param    mixed  $value
 	 * @return   mixed
 	 * @uses     UTF8::transliterate_to_ascii
 	 * @credits  Kohana-Team
@@ -42,7 +42,7 @@ abstract class Jelly_Core_Field_Slug extends Jelly_Field_String {
 	public function set($value)
 	{
 		list($value, $return) = $this->_default($value);
-		
+
 		if ( ! $return)
 		{
 			if ($this->ascii_only === TRUE)

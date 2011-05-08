@@ -17,7 +17,7 @@ abstract class Jelly_Core_Field {
 	const WITH       = 'with';
 	const ADD_REMOVE = 'add_remove';
 	const JOIN       = 'join';
-	
+
 	/**
 	 * @var  string  the model's name
 	 */
@@ -62,12 +62,12 @@ abstract class Jelly_Core_Field {
 	 * @var  boolean  whether or not empty() values should be converted to NULL
 	 */
 	public $convert_empty = FALSE;
-	
+
 	/**
 	 * @var  mixed  the value to convert empty values to. This is only used if convert_empty is TRUE
 	 */
 	public $empty_value = NULL;
-	
+
 	/**
 	 * @var  boolean  whether or not NULL values are allowed
 	 */
@@ -86,8 +86,8 @@ abstract class Jelly_Core_Field {
 	/**
 	 * Sets all options.
 	 *
-	 * @return  void
-	 **/
+	 * @param  array  $options
+	 */
 	public function __construct($options = array())
 	{
 		// Assume it's the column name
@@ -129,8 +129,8 @@ abstract class Jelly_Core_Field {
 	 * This is called after construction so that fields can finish
 	 * constructing themselves with a copy of the column it represents.
 	 *
-	 * @param   string  model
-	 * @param   string  column
+	 * @param   string  $model
+	 * @param   string  $column
 	 * @return  void
 	 **/
 	public function initialize($model, $column)
@@ -164,7 +164,7 @@ abstract class Jelly_Core_Field {
 	 * Sets a particular value processed according
 	 * to the class's standards.
 	 *
-	 * @param   mixed  value
+	 * @param   mixed  $value
 	 * @return  mixed
 	 **/
 	public function set($value)
@@ -178,8 +178,8 @@ abstract class Jelly_Core_Field {
 	 * Returns a particular value processed according
 	 * to the class's standards.
 	 *
-	 * @param   Jelly_Model  model
-	 * @param   mixed        value
+	 * @param   Jelly_Model  $model
+	 * @param   mixed        $value
 	 * @return  mixed
 	 **/
 	public function get($model, $value)
@@ -193,46 +193,46 @@ abstract class Jelly_Core_Field {
 	 * If $in_db, it is expected to return a value suitable for insertion
 	 * into the database.
 	 *
-	 * @param   Jelly_Model  model
-	 * @param   mixed        value
-	 * @param   bool         loaded
+	 * @param   Jelly_Model  $model
+	 * @param   mixed        $value
+	 * @param   bool         $loaded
 	 * @return  mixed
 	 */
 	public function save($model, $value, $loaded)
 	{
 		return $value;
 	}
-	
+
 	/**
 	 * Triggered whenever the model this field is attached to is deleted.
-	 * 
+	 *
 	 * This is useful for fields that need to implement some sort of
-	 * garbage collection. 
-	 * 
+	 * garbage collection.
+	 *
 	 * This method is called just before the actual record in the database
-	 * is deleted, and is not called at all if a model behavior stops 
+	 * is deleted, and is not called at all if a model behavior stops
 	 * the actual deletion of the record.
 	 *
-	 * @param   Jelly_Model  model
-	 * @param   mixed        key
+	 * @param   Jelly_Model  $model
+	 * @param   mixed        $key
 	 * @return  void
 	 */
 	public function delete($model, $key)
 	{
 		return;
 	}
-	
+
 	/**
 	 * Returns whether or not a field supports a particular feature.
-	 * 
+	 *
 	 * This is abstracted away so Jelly_Model and Jelly_Builder don't
 	 * have to litter their code with instanceof checks and so we
 	 * can change the underlying implementation at will.
-	 * 
+	 *
 	 * It is also easily overridable so custom fields can add their
 	 * own support for specific features if they want.
-	 * 
-	 * @param   string   The feature you're checking for support
+	 *
+	 * @param   string  $feature The feature you're checking for support
 	 * @return  boolean
 	 */
 	public function supports($feature)
@@ -250,16 +250,18 @@ abstract class Jelly_Core_Field {
 			case Jelly_Field::JOIN:
 				return $this instanceof Jelly_Field_Supports_Join;
 		}
-		
+
 		return FALSE;
 	}
-	
+
 
 	/**
 	 * Callback for validating that a field is unique.
 	 *
-	 * @param   Validation  data
-	 * @param   string      field
+	 * @param   Validation   $data
+	 * @param   Jelly_Model  $model
+	 * @param   string       $value
+	 * @param   string       $key
 	 * @return  void
 	 */
 	public function _is_unique(Validation $data, Jelly_Model $model, $value, $key)
@@ -282,7 +284,7 @@ abstract class Jelly_Core_Field {
 			}
 		}
 	}
-	
+
 	/**
 	 * Potentially converts the value to NULL or default depending on
 	 * the fields configuration. An array is returned with the first
@@ -290,34 +292,34 @@ abstract class Jelly_Core_Field {
 	 * as to whether the field should return the value provided or
 	 * continue processing it.
 	 *
-	 * @param   mixed  value
+	 * @param   mixed  $value
 	 * @return  array
 	 */
 	protected function _default($value)
 	{
 		$return = FALSE;
-		
+
 		// Convert empty values to NULL, if needed
 		if ($this->convert_empty AND empty($value))
 		{
 			$value  = $this->empty_value;
 			$return = TRUE;
 		}
-		
+
 		// Allow NULL values to pass through untouched by the field
 		if ($this->allow_null AND $value === NULL)
 		{
 			$value  = NULL;
 			$return = TRUE;
 		}
-		
+
 		return array($value, $return);
 	}
 
 	/**
 	 * Converts a bunch of types to an array of ids.
 	 *
-	 * @param   mixed  models
+	 * @param   Jelly_Collection|mixed  $models
 	 * @return  array
 	 */
 	protected function _ids($models)

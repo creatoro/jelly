@@ -18,11 +18,13 @@ abstract class Jelly_Core_Field_Password extends Jelly_Field_String {
 	 * @var  callback  a valid callback to use for hashing the password or FALSE to not hash
 	 */
 	public $hash_with = 'sha1';
-	
+
 	/**
 	 * Adds a filter that hashes the password.
 	 *
-	 * @param  array  options
+	 * @param   Jelly_Model  $model
+	 * @param   mixed        $column
+	 * @return  void
 	 */
 	public function initialize($model, $column)
 	{
@@ -35,8 +37,8 @@ abstract class Jelly_Core_Field_Password extends Jelly_Field_String {
 	/**
 	 * Hashes the password only if it's changed.
 	 *
-	 * @param   string       password
-	 * @param   Jelly_Model  model
+	 * @param   string       $password
+	 * @param   Jelly_Model  $model
 	 * @return  void
 	 */
 	public function hash($password, Jelly_Model $model)

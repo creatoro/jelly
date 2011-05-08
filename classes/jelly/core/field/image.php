@@ -9,7 +9,7 @@
  * In addition any other image refactoring method can be set like this:
  * 'method_name' => array('arg1', 'arg2'), for example 'sharpen' => array(20)
  *
- * 
+ *
  *  path: the only required property. It must point to a valid, writable directory.
  *  prefix: a thumbnail only property. If set the filename of the thumbnail will be prefixed with the value.
  *  resize: the arguments to pass to Image->resize(). See the documentation for that method for more info.
@@ -61,13 +61,13 @@ abstract class Jelly_Core_Field_Image extends Jelly_Field_File {
 		// The driver to use, defaults to Image::$default_driver
 		'driver' => NULL,
 	);
-	
+
 	/**
 	 * @var  array  specifications for all of the thumbnails that should be automatically generated when a new image is uploaded
-	 *  
+	 *
 	 */
 	public $thumbnails = array();
-	
+
 	/**
 	 * @var  array  allowed file types
 	 */
@@ -77,7 +77,7 @@ abstract class Jelly_Core_Field_Image extends Jelly_Field_File {
 	 * Ensures there we have validation rules restricting file types to valid image filetypes and
 	 * that the paths for any thumbnails exist and are writable.
 	 *
-	 * @param  array  options
+	 * @param  array  $options
 	 */
 	public function __construct($options = array())
 	{
@@ -91,7 +91,7 @@ abstract class Jelly_Core_Field_Image extends Jelly_Field_File {
 		{
 			// Merge defaults to prevent array access errors down the line
 			$thumbnail += Jelly_Field_Image::$defaults;
-			
+
 			// Ensure the path is normalized and writable if set
 			if ($thumbnail['path'])
 			{
@@ -115,9 +115,9 @@ abstract class Jelly_Core_Field_Image extends Jelly_Field_File {
 	 * Logic to deal with uploading the image file and generating thumbnails according to
 	 * what has been specified in the $thumbnails array.
 	 *
-	 * @param   Validation   validation
-	 * @param   Jelly_Model  model
-	 * @param   string       field
+	 * @param   Validation   $validation
+	 * @param   Jelly_Model  $model
+	 * @param   string       $field
 	 * @return  void
 	 */
 	public function _upload(Validation $validation, $model, $field)
@@ -196,11 +196,11 @@ abstract class Jelly_Core_Field_Image extends Jelly_Field_File {
 	/**
 	 * Refactors the images.
 	 *
-	 * @param   string  the source file
-	 * @param   driver  image driver to use
-	 * @param   array   image refactoring methods
-	 * @param   string  the destination file
-	 * @param   int     quality of the saved file
+	 * @param   string      $source       the source file
+	 * @param   string      $driver       image driver to use
+	 * @param   array       $methods      image refactoring methods
+	 * @param   string|null $destination  the destination file
+	 * @param   int|null    $quality      quality of the saved file
 	 * @return  void
 	 */
 	protected function _refactor($source, $driver, $methods, $destination = NULL, $quality = NULL)

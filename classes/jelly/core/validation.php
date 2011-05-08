@@ -29,7 +29,6 @@ abstract class Jelly_Core_Validation extends Validation
 	 *          // The data is valid, do something here
 	 *     }
 	 *
-	 * @param   boolean   allow empty array?
 	 * @return  boolean
 	 */
 	public function check()
@@ -193,4 +192,4 @@ abstract class Jelly_Core_Validation extends Validation
 
 		return empty($this->_errors);
 	}
-} // End Jelly Validation
+} // End Jelly_Validation

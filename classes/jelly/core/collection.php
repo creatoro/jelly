@@ -22,30 +22,31 @@ abstract class Jelly_Core_Collection implements Iterator, Countable, SeekableIte
 	 * @var  Jelly_Meta  The current meta object, based on the model we're returning
 	 */
 	protected $_meta = NULL;
-	
+
 	/**
 	 * @var  Jelly_Model  The current class we're placing results into
 	 */
 	protected $_model = NULL;
 
 	/**
-	 * @var  mixed  The current result set
+	 * @var  Jelly_Collection|array|mixed  The current result set
 	 */
 	protected $_result = NULL;
+
 	/**
 	 * Tracks a database result
 	 *
 	 * @param  mixed  $model
 	 * @param  mixed  $result
 	 */
-	public function __construct($result, $as_object = NULL)
+	public function __construct($result, $model = NULL)
 	{
 		$this->_result = $result;
-		
+
 		// Load our default model
-		if ($as_object AND Jelly::meta($as_object))
+		if ($model AND Jelly::meta($model))
 		{
-			$this->_model = ($as_object instanceof Jelly_Model) ? $as_object : new $as_object;
+			$this->_model = ($model instanceof Jelly_Model) ? $model : new $model;
 			$this->_meta  = $this->_model->meta();
 		}
 	}
@@ -64,7 +65,7 @@ abstract class Jelly_Core_Collection implements Iterator, Countable, SeekableIte
 
 		return array_keys(get_object_vars($this));
 	}
-	
+
 	/**
 	 * Returns a string representation of the collection.
 	 *
@@ -74,7 +75,7 @@ abstract class Jelly_Core_Collection implements Iterator, Countable, SeekableIte
 	{
 		return get_class($this).': '.Jelly::model_name($this->_model).' ('.$this->count().')';
 	}
-	
+
 	/**
 	 * Returns the collection's meta object, if it exists.
 	 *
@@ -88,8 +89,8 @@ abstract class Jelly_Core_Collection implements Iterator, Countable, SeekableIte
 	/**
 	 * Return all of the rows in the result as an array.
 	 *
-	 * @param   string  column for associative keys
-	 * @param   string  column for values
+	 * @param   string  $key   column for associative keys
+	 * @param   string  $value column for values
 	 * @return  array
 	 */
 	public function as_array($key = NULL, $value = NULL)
@@ -99,7 +100,7 @@ abstract class Jelly_Core_Collection implements Iterator, Countable, SeekableIte
 
 	/**
 	 * Implementation of the Iterator interface
-	 * @return  $this
+	 * @return  Jelly_Collection
 	 */
 	public function rewind()
 	{
@@ -109,7 +110,8 @@ abstract class Jelly_Core_Collection implements Iterator, Countable, SeekableIte
 
 	/**
 	 * Implementation of the Iterator interface
-	 * @return  Jelly
+	 *
+	 * @return  Jelly_Model|array
 	 */
     public function current()
 	{
@@ -138,7 +140,7 @@ abstract class Jelly_Core_Collection implements Iterator, Countable, SeekableIte
 
 	/**
 	 * Implementation of the Iterator interface
-	 * @return  $this
+	 * @return  Jelly_Collection
 	 */
 	public function next()
 	{
@@ -148,20 +150,22 @@ abstract class Jelly_Core_Collection implements Iterator, Countable, SeekableIte
 
 	/**
 	 * Implementation of the Iterator interface
+	 *
 	 * @return  boolean
 	 */
 	public function valid()
 	{
-		return $this->_result->valid();;
+		return $this->_result->valid();
 	}
 
 	/**
 	 * Implementation of the Countable interface
-	 * @return  boolean
+	 *
+	 * @return  int
 	 */
 	public function count()
 	{
-		return $this->_result->count();;
+		return $this->_result->count();
 	}
 
 	/**
@@ -177,6 +181,9 @@ abstract class Jelly_Core_Collection implements Iterator, Countable, SeekableIte
 
 	/**
 	 * ArrayAccess: offsetExists
+	 *
+	 * @param   mixed  $offset
+	 * @return  boolean
 	 */
 	public function offsetExists($offset)
 	{
@@ -185,6 +192,10 @@ abstract class Jelly_Core_Collection implements Iterator, Countable, SeekableIte
 
 	/**
 	 * ArrayAccess: offsetGet
+	 *
+	 * @param   mixed  $offset
+	 * @param   bool   $object
+	 * @return  array|Jelly_Model
 	 */
 	public function offsetGet($offset, $object = TRUE)
 	{
@@ -195,6 +206,9 @@ abstract class Jelly_Core_Collection implements Iterator, Countable, SeekableIte
 	 * ArrayAccess: offsetSet
 	 *
 	 * @throws  Kohana_Exception
+	 * @param   mixed  $offset
+	 * @param   mixed  $value
+	 * @return  void
 	 */
 	final public function offsetSet($offset, $value)
 	{
@@ -205,6 +219,8 @@ abstract class Jelly_Core_Collection implements Iterator, Countable, SeekableIte
 	 * ArrayAccess: offsetUnset
 	 *
 	 * @throws  Kohana_Exception
+	 * @param   mixed  $offset
+	 * @return  void
 	 */
 	final public function offsetUnset($offset)
 	{
@@ -214,7 +230,7 @@ abstract class Jelly_Core_Collection implements Iterator, Countable, SeekableIte
 	/**
 	 * Loads values into the model.
 	 *
-	 * @param   array $values
+	 * @param   array  $values
 	 * @return  Jelly_Model|array
 	 */
 	protected function _load($values)
@@ -231,4 +247,4 @@ abstract class Jelly_Core_Collection implements Iterator, Countable, SeekableIte
 
 		return $values;
 	}
-}
+} // End Jelly_Core_Collection

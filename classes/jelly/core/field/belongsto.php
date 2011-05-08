@@ -13,22 +13,22 @@ abstract class Jelly_Core_Field_BelongsTo extends Jelly_Field implements Jelly_F
 	 * @var  boolean  defaults belongs_to's to in the database
 	 */
 	public $in_db = TRUE;
-	
+
 	/**
 	 * @var  int  default to 0 for no relationship
 	 */
 	public $default = 0;
-	
+
 	/**
 	 * @var  boolean  null values are not allowed, 0 represents no record
 	 */
 	public $allow_null = FALSE;
-	
+
 	/**
 	 * @var  boolean  empty values are converted to the default
 	 */
 	public $convert_empty = TRUE;
-	
+
 	/**
 	 * @var  int  empty values are converted to 0, not NULL
 	 */
@@ -39,12 +39,12 @@ abstract class Jelly_Core_Field_BelongsTo extends Jelly_Field implements Jelly_F
 	 *               field, column, or meta-alias)
 	 */
 	public $foreign = '';
-	
+
 	/**
 	 * Automatically sets foreign to sensible defaults.
 	 *
-	 * @param   string  model
-	 * @param   string  column
+	 * @param   string  $model
+	 * @param   string  $column
 	 * @return  void
 	 */
 	public function initialize($model, $column)
@@ -76,7 +76,7 @@ abstract class Jelly_Core_Field_BelongsTo extends Jelly_Field implements Jelly_F
 	/**
 	 * Returns the primary key of the model passed.
 	 *
-	 * @param   mixed  value
+	 * @param   mixed  $value
 	 * @return  mixed
 	 */
 	public function set($value)
@@ -85,22 +85,22 @@ abstract class Jelly_Core_Field_BelongsTo extends Jelly_Field implements Jelly_F
 		{
 			$value = $value->id();
 		}
-		
+
 		list($value, $return) = $this->_default($value);
-		
+
 		if ( ! $return)
 		{
 			$value = ( ! $value OR is_numeric($value)) ? (int) $value : (string) $value;
 		}
-		
+
 		return $value;
 	}
 
 	/**
 	 * Returns the Jelly model that this model belongs to.
 	 *
-	 * @param   Jelly_Model    model
-	 * @param   mixed          value
+	 * @param   Jelly_Model    $model
+	 * @param   mixed          $value
 	 * @return  Jelly_Builder
 	 */
 	public function get($model, $value)
@@ -113,7 +113,7 @@ abstract class Jelly_Core_Field_BelongsTo extends Jelly_Field implements Jelly_F
 	/**
 	 * Implementation of Jelly_Field_Behavior_Joinable.
 	 *
-	 * @param   Jelly_Builder  builder
+	 * @param   Jelly_Builder  $builder
 	 * @return  void
 	 */
 	public function with($builder)

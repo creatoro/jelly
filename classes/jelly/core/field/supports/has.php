@@ -19,8 +19,8 @@ interface Jelly_Core_Field_Supports_Has {
 	 * an array of models, or a single model. The implementation should
 	 * handle all forms.
 	 *
-	 * @param   Jelly_Model  model
-	 * @param   mixed        models
+	 * @param   Jelly_Model  $model
+	 * @param   mixed        $models
 	 * @return  boolean
 	 */
 	public function has($model, $models);

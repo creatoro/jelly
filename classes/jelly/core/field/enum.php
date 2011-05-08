@@ -20,7 +20,7 @@ abstract class Jelly_Core_Field_Enum extends Jelly_Field_String {
 	/**
 	 * Ensures there is a choices array set.
 	 *
-	 * @param  array  options
+	 * @param  array  $options
 	 */
 	public function __construct($options = array())
 	{
@@ -32,7 +32,7 @@ abstract class Jelly_Core_Field_Enum extends Jelly_Field_String {
 			throw new Kohana_Exception(':class must have a `choices` property set', array(
 				':class' => get_class($this)));
 		}
-		
+
 		// Set allow_null to TRUE if we find a NULL value
 		if (in_array(NULL, $this->choices))
 		{
@@ -43,15 +43,15 @@ abstract class Jelly_Core_Field_Enum extends Jelly_Field_String {
 		{
 			array_unshift($this->choices, NULL);
 		}
-		
+
 		reset($this->choices);
-		
+
 		// Set the default value from the first choice in the array
 		if ( ! array_key_exists('default', $options))
 		{
 			$this->default = current($this->choices);
 		}
-		
+
 		 // Convert non-associative values to associative ones
 		if ( ! Arr::is_assoc($this->choices))
 		{

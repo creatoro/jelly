@@ -42,12 +42,12 @@ abstract class Jelly_Core_Model
 	 * @var  Jelly_Meta  A copy of this object's meta object
 	 */
 	protected $_meta = NULL;
-	
+
 	/**
 	 * @var  Jelly_Validation  A copy of this object's validation
 	 */
 	protected $_validation = NULL;
-	
+
 	/**
 	 * @var  Boolean  A flag that keeps track of whether or not the model is valid
 	 */
@@ -60,18 +60,18 @@ abstract class Jelly_Core_Model
 
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * A key can be passed to automatically load a model by its
 	 * unique key.
 	 *
-	 * @param  mixed  $values
-	 **/
+	 * @param  mixed|null  $key
+	 */
 	public function __construct($key = NULL)
 	{
 		// Load the object's meta data for quick access
 		$this->_meta = Jelly::meta($this);
 
-		// Copy over the defaults into the original data. 
+		// Copy over the defaults into the original data.
 		$this->_original = $this->_meta->defaults();
 
 		// Have an id? Attempt to load it
@@ -80,7 +80,7 @@ abstract class Jelly_Core_Model
 			$result = Jelly::query($this, $key)
 			     ->as_object(FALSE)
 			     ->select();
-			
+
 			// Only load if a record is found
 			if ($result)
 			{
@@ -96,7 +96,7 @@ abstract class Jelly_Core_Model
 	 * until they are changed and relationships are automatically select()ed.
 	 *
 	 * @see     get()
-	 * @param   string  The name or alias of the field you're retrieving
+	 * @param   string  $name The name or alias of the field you're retrieving
 	 * @return  mixed
 	 */
 	public function &__get($name)
@@ -127,7 +127,7 @@ abstract class Jelly_Core_Model
 			{
 				$value = $this->get($name);
 			}
-			
+
 			// Auto-load relations
 			if ($value instanceof Jelly_Builder)
 			{
@@ -144,8 +144,8 @@ abstract class Jelly_Core_Model
 	 * Sets the value of a field.
 	 *
 	 * @see     set()
-	 * @param   string  The name of the field you're setting
-	 * @param   mixed   The value you're setting
+	 * @param   string  $name  The name of the field you're setting
+	 * @param   mixed   $value The value you're setting
 	 * @return  void
 	 */
 	public function __set($name, $value)
@@ -159,7 +159,7 @@ abstract class Jelly_Core_Model
 
 		$this->set($name, $value);
 	}
-	
+
 	/**
 	 * Passes unknown methods along to the behaviors.
 	 *
@@ -174,12 +174,12 @@ abstract class Jelly_Core_Model
 
 	/**
 	 * Returns true if $name is a field of the model or an unmapped column.
-	 * 
+	 *
 	 * This does not conform to the standard of returning FALSE if the
 	 * property is set but the value is NULL. Rather this acts more like
 	 * property_exists.
 	 *
-	 * @param   string  $name
+	 * @param  string    $name
 	 * @return  boolean
 	 */
 	public function __isset($name)
@@ -210,12 +210,12 @@ abstract class Jelly_Core_Model
 		// We can safely delete this no matter what
 		unset($this->_unmapped[$name]);
 	}
-	
+
 	/**
 	 * Returns a string representation of the model in the
 	 * form of `Model_Name (id)` or `Model_Name (NULL)` if
 	 * the model is not loaded.
-	 * 
+	 *
 	 * This is designed to be useful for debugging.
 	 *
 	 * @return  string
@@ -232,8 +232,8 @@ abstract class Jelly_Core_Model
 	 * execute()d before they can be used. This allows you to chain
 	 * extra statements on to them.
 	 *
-	 * @param   string  The field's name
-	 * @return  mixed
+	 * @param   string       $name The field's name
+	 * @return  array|mixed
 	 */
 	public function get($name)
 	{
@@ -259,14 +259,14 @@ abstract class Jelly_Core_Model
 			return $this->_unmapped[$name];
 		}
 	}
-	
+
 	/**
 	 * Returns the original value of a field, before it was changed.
-	 * 
-	 * This method—combined with get(), which first searches for changed 
-	 * values—is useful for comparing changes that occurred on a model. 
 	 *
-	 * @param   string  The field's or alias name
+	 * This method—combined with get(), which first searches for changed
+	 * values—is useful for comparing changes that occurred on a model.
+	 *
+	 * @param   string  $field The field's or alias name
 	 * @return  mixed
 	 */
 	public function original($field)
@@ -286,8 +286,8 @@ abstract class Jelly_Core_Model
 	 *
 	 *     $model->as_array(array('id', 'name', 'status'));
 	 *
-	 * @param  array  $fields
-	 * @return array
+	 * @param   array  $fields
+	 * @return  array
 	 */
 	public function as_array(array $fields = NULL)
 	{
@@ -304,19 +304,19 @@ abstract class Jelly_Core_Model
 
 	/**
 	 * Sets the value of a field.
-	 * 
+	 *
 	 * You can pass an array of key => value pairs
 	 * to set multiple fields at the same time:
-	 * 
+	 *
 	 *    $model->set(array(
 	 *        'field1' => 'value',
 	 *        'field2' => 'value',
 	 *         ....
 	 *    ));
 	 *
-	 * @param   string  $name
-	 * @param   string  $value
-	 * @return  $this
+	 * @param   array|string  $values
+	 * @param   string        $value
+	 * @return  Jelly_Model
 	 */
 	public function set($values, $value = NULL)
 	{
@@ -378,10 +378,10 @@ abstract class Jelly_Core_Model
 	/**
 	 * Filters a value for a specific column
 	 *
-	 * @param  string $field  The column name
-	 * @param  string $value  The value to filter
-	 * @return string
-	 * @credits Kohana Team
+	 * @param    string       $field  The column name
+	 * @param    string       $value  The value to filter
+	 * @return   string
+	 * @credits  Kohana Team
 	 */
 	protected function run_filter($field, $value)
 	{
@@ -470,8 +470,8 @@ abstract class Jelly_Core_Model
 	 * This should only be used for setting from database results
 	 * since the model declares itself as saved and loaded after.
 	 *
-	 * @param   array    $values
-	 * @return  $this
+	 * @param   Jelly_Collection|Jelly_Model|array  $values
+	 * @return  Jelly_Model
 	 */
 	public function load_values($values)
 	{
@@ -483,18 +483,18 @@ abstract class Jelly_Core_Model
 			// Key is coming from a with statement
 			if (substr($key, 0, 1) === ':')
 			{
-				// The field comes back as ':model:field', 
+				// The field comes back as ':model:field',
 				// but can have infinite :field parts
 				$targets = explode(':', ltrim($key, ':'), 2);
 
-				// Alias as it comes back in, which allows 
+				// Alias as it comes back in, which allows
 				// people to use with() with alaised field names
 				$relationship = $this->_meta->field(array_shift($targets), TRUE);
 
 				// Find the field we need to set the value as
 				$target = implode(':', $targets);
 
-				// If there is no ":" in the target, it is a 
+				// If there is no ":" in the target, it is a
 				// column, otherwise it's another with()
 				if (FALSE !== strpos($target, ':'))
 				{
@@ -524,7 +524,9 @@ abstract class Jelly_Core_Model
 	/**
 	 * Validates the current model's data
 	 *
-	 * @return Jelly
+	 * @throws  Jelly_Validation_Exception
+	 * @param   Validation|null   $extra_validation
+	 * @return  Jelly_Core_Model
 	 */
 	public function check($extra_validation = NULL)
 	{
@@ -574,7 +576,9 @@ abstract class Jelly_Core_Model
 	/**
 	 * Initializes validation rules, and labels
 	 *
-	 * @return void
+	 * @param   array  $data
+	 * @param   bool   $update
+	 * @return  void
 	 */
 	protected function _validation($data, $update = FALSE)
 	{
@@ -589,8 +593,9 @@ abstract class Jelly_Core_Model
 	/**
 	 * Creates or updates the current record.
 	 *
-	 * @return  $this
-	 **/
+	 * @param   bool|null        $validation
+	 * @return  Jelly_Core_Model
+	 */
 	public function save($validation = NULL)
 	{
 		$key = $this->_original[$this->_meta->primary_key()];
@@ -603,7 +608,7 @@ abstract class Jelly_Core_Model
 
 		// These will be processed later
 		$values = $saveable = array();
-		
+
 		// Trigger callbacks and ensure we should proceed
 		if (FALSE === $this->_meta->events()->trigger('model.before_save', $this))
 		{
@@ -629,7 +634,7 @@ abstract class Jelly_Core_Model
 				}
 				// Or if we're INSERTing and we need to set the defaults for the first time
 				else if ( ! $key AND ! $this->changed($field->name) AND ! $field->primary)
-				{	
+				{
 					$values[$field->name] = $field->default;
 				}
 			}
@@ -661,7 +666,7 @@ abstract class Jelly_Core_Model
 			// Gotta make sure to set this
 			$this->_changed[$this->_meta->primary_key()] = $id;
 		}
-		
+
 		// Re-set any saved values; they may have changed
 		foreach ($values as $column => $value)
 		{
@@ -680,7 +685,7 @@ abstract class Jelly_Core_Model
 		{
 			$this->_meta->field($field)->save($this, $value, (bool) $key);
 		}
-		
+
 		// Trigger post-save callback
 		$this->_meta->events()->trigger('model.after_save', $this);
 
@@ -690,7 +695,6 @@ abstract class Jelly_Core_Model
 	/**
 	 * Deletes a single record.
 	 *
-	 * @param   $key  A key to use for non-loaded records
 	 * @return  boolean
 	 **/
 	public function delete()
@@ -701,10 +705,10 @@ abstract class Jelly_Core_Model
 		if ($this->_loaded)
 		{
 			$key = $this->_original[$this->_meta->primary_key()];
-			
+
 			// Trigger callbacks to ensure we proceed
 			$result = $this->_meta->events()->trigger('model.before_delete', $this);
-			
+
 			if ($result === NULL)
 			{
 				// Trigger field callbacks
@@ -712,59 +716,59 @@ abstract class Jelly_Core_Model
 				{
 					$field->delete($this, $key);
 				}
-				
+
 				$result = Jelly::query($this, $key)->delete();
 			}
 		}
-		
+
 		// Trigger the after-delete
 		$this->_meta->events()->trigger('model.after_delete', $this);
-		
+
 		// Clear the object so it appears deleted anyway
 		$this->clear();
 
 		return (boolean) $result;
 	}
-	
+
 	/**
 	 * Removes any changes made to a model.
 	 *
 	 * This method only works on loaded models.
-	 * 
-	 * @return $this
+	 *
+	 * @return  Jelly_Model
 	 */
 	public function revert()
 	{
 		if ($this->_loaded)
 		{
-			$this->_loaded = 
+			$this->_loaded =
 			$this->_saved  = TRUE;
 
 			$this->_changed   =
 			$this->_retrieved = array();
 		}
-		
+
 		return $this;
 	}
 
 	/**
 	 * Sets a model to its original state, as if freshly instantiated
 	 *
-	 * @return  $this
+	 * @return  Jelly_Model
 	 */
 	public function clear()
 	{
 		$this->_valid  =
-		$this->_loaded = 
+		$this->_loaded =
 		$this->_saved  = FALSE;
-		
-		$this->_with      = 
+
+		$this->_with      =
 		$this->_changed   =
-		$this->_retrieved = 
+		$this->_retrieved =
 		$this->_unmapped  = array();
-		
+
 		$this->_original = $this->_meta->defaults();
-		
+
 		return $this;
 	}
 
@@ -782,8 +786,8 @@ abstract class Jelly_Core_Model
 	 *  * A Jelly_Collection
 	 *  * An array of primary keys or models
 	 *
-	 * @param   string  $name
-	 * @param   mixed   $models
+	 * @param   string   $name
+	 * @param   mixed    $models
 	 * @return  boolean
 	 */
 	public function has($name, $models)
@@ -802,9 +806,9 @@ abstract class Jelly_Core_Model
 	/**
 	 * Adds a specific model or models to the relationship.
 	 *
-	 * @param   string  $name
-	 * @param   mixed   $models
-	 * @return  $this
+	 * @param   string      $name
+	 * @param   mixed       $models
+	 * @return  Jelly_Model
 	 */
 	public function add($name, $models)
 	{
@@ -814,15 +818,15 @@ abstract class Jelly_Core_Model
 	/**
 	 * Removes a specific model or models to the relationship.
 	 *
-	 * @param   string  $name
-	 * @param   mixed   $models
-	 * @return  $this
+	 * @param   string       $name
+	 * @param   mixed        $models
+	 * @return  Jelly_Model
 	 */
 	public function remove($name, $models)
 	{
 		return $this->_change($name, $models, FALSE);
 	}
-	
+
 	/**
 	 * Returns whether or not the model is loaded
 	 *
@@ -842,10 +846,10 @@ abstract class Jelly_Core_Model
 	{
 		return $this->_saved;
 	}
-	
+
 	/**
 	 * Returns whether or not the particular $field has changed.
-	 * 
+	 *
 	 * If $field is NULL, the method returns whether or not any
 	 * data whatsoever was changed on the model.
 	 *
@@ -893,14 +897,14 @@ abstract class Jelly_Core_Model
 	{
 		return $this->_meta;
 	}
-	
+
 	/**
 	 * Changes a relation by adding or removing specific records from the relation.
 	 *
-	 * @param   string  $name    The name of the field
-	 * @param   mixed   $models  Models or primary keys to add or remove
-	 * @param   string  $add     True to add, False to remove
-	 * @return  $this
+	 * @param   string      $name    The name of the field
+	 * @param   mixed       $models  Models or primary keys to add or remove
+	 * @param   string      $add     True to add, False to remove
+	 * @return  Jelly_Model
 	 */
 	protected function _change($name, $models, $add)
 	{
@@ -948,7 +952,7 @@ abstract class Jelly_Core_Model
 	/**
 	 * Converts different model types to an array of primary keys
 	 *
-	 * @param   mixed  $models
+	 * @param   array|mixed  $models
 	 * @return  array
 	 */
 	protected function _ids($models)
@@ -991,4 +995,4 @@ abstract class Jelly_Core_Model
 
 		return $ids;
 	}
-}
+}  // End Jelly_Core_Model

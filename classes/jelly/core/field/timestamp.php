@@ -23,7 +23,7 @@ abstract class Jelly_Core_Field_Timestamp extends Jelly_Field {
 	 * @var  int  default is NULL, which implies no date
 	 */
 	public $default = NULL;
-	
+
 	/**
 	 * @var  boolean  whether or not to automatically set now() on creation
 	 */
@@ -38,16 +38,16 @@ abstract class Jelly_Core_Field_Timestamp extends Jelly_Field {
 	 * @var  string  a date formula representing the time in the database
 	 */
 	public $format = NULL;
-	
+
 	/**
 	 * Sets the default to 0 if we have no format, or an empty string otherwise.
 	 *
-	 * @param  array  options
+	 * @param  array  $options
 	 */
 	public function __construct($options = array())
 	{
 		parent::__construct($options);
-		
+
 		if ( ! isset($options['default']) AND ! $this->allow_null)
 		{
 			// Having a format implies we're saving a string, so we want a proper default
@@ -58,13 +58,13 @@ abstract class Jelly_Core_Field_Timestamp extends Jelly_Field {
 	/**
 	 * Converts the time to a UNIX timestamp.
 	 *
-	 * @param   mixed  value
+	 * @param   mixed  $value
 	 * @return  mixed
 	 */
 	public function set($value)
 	{
 		list($value, $return) = $this->_default($value);
-		
+
 		if ( ! $return)
 		{
 			if (is_numeric($value))
@@ -76,7 +76,7 @@ abstract class Jelly_Core_Field_Timestamp extends Jelly_Field {
 				$value = $to_time;
 			}
 		}
-		
+
 		return $value;
 	}
 
@@ -84,9 +84,10 @@ abstract class Jelly_Core_Field_Timestamp extends Jelly_Field {
 	 * Automatically creates or updates the time and
 	 * converts it, if necessary.
 	 *
-	 * @param   Jelly  model
-	 * @param   mixed  value
-	 * @return  mixed
+	 * @param   Jelly_Model  $model
+	 * @param   mixed        $value
+	 * @param   boolean      $loaded
+	 * @return  int|string
 	 */
 	public function save($model, $value, $loaded)
 	{
