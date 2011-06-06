@@ -20,20 +20,18 @@ abstract class Jelly_Core_Field_Password extends Jelly_Field_String {
 	public $hash_with = 'sha1';
 
 	/**
-	 * Adds a filter that hashes the password.
+	 * Hash password before saving if the field is $in_db, and just after if it's not.
 	 *
 	 * @param   Jelly_Model  $model
-	 * @param   mixed        $column
-	 * @return  void
+	 * @param   mixed        $value
+	 * @param   bool         $loaded
+	 * @return  mixed
 	 */
-	public function initialize($model, $column)
+	public function save($model, $value, $loaded)
 	{
-		parent::initialize($model, $column);
-
-		// Add a filter that hashes the password when validating
-		$this->filters[] = array(array(':field', 'hash'), array(':value', ':model'));
+		return $this->hash($value, $model);
 	}
-
+	
 	/**
 	 * Hashes the password only if it's changed.
 	 *
