@@ -849,7 +849,11 @@ abstract class Jelly_Core_Builder extends Database_Query_Builder_Select
 		}
 
 		// Check to see if it's a known alias first
-		if (isset($this->_alias_cache[$model]))
+		if (isset($alias) and isset($this->_alias_cache[$alias]))
+		{
+			return $this->_alias_cache[$alias];
+		}
+		elseif ( ! isset($alias) and isset($this->_alias_cache[$model]))
 		{
 			return $this->_alias_cache[$model];
 		}
@@ -892,10 +896,6 @@ abstract class Jelly_Core_Builder extends Database_Query_Builder_Select
 			$this->_model_cache[$original] = array($table, $alias, $model);
 			$this->_alias_cache[$alias]    = $this->_model_cache[$original];
 		}
-
-
-
-
 
 		return $this->_model_cache[$original];
 	}
