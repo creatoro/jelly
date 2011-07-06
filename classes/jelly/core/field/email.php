@@ -23,10 +23,25 @@ abstract class Jelly_Core_Field_Email extends Jelly_Field_String {
 	{
 		parent::initialize($model, $column);
 
-		if ( ! isset($this->rules['email']))
+		$required_rules = array(
+            'email' => array('email'),
+        );
+        
+        foreach ($this->rules as $rule)
 		{
-			$this->rules[] = array('email');
-		}
+            if (isset($required_rules[$rule[0]]))
+            {
+                unset($required_rules[$rule[0]]);
+            }
+        }
+        
+        if (count($required_rules))
+        {
+            foreach ($required_rules as $rule)
+            {
+                $this->rules[] = $rule;
+            }
+        }
 	}
 
 } // End Jelly_Core_Field_Email
