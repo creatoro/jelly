@@ -64,6 +64,11 @@ abstract class Jelly_Core_Builder extends Database_Query_Builder_Select
 	protected $_alias_cache = array();
 
 	/**
+	 * @var  array  Records with-ed fields
+	 */
+	protected $_with = array();
+
+	/**
 	 * Constructs a new Jelly_Builder instance.
 	 *
 	 * $model is not actually allowed to be NULL. It has
@@ -718,14 +723,16 @@ abstract class Jelly_Core_Builder extends Database_Query_Builder_Select
 		// Ensure the main model is selected
 		$this->select_column($this->_model.'.*');
 
-		// We'll start with the first one and work our way down
-		$paths = explode(":", $relationship);
-		$origin = $parent = $this->_meta->model();
-		$chain = '';
+		$rel_path = explode(":", $relationship);
+		$parent_model = $this->_meta->model();
+		$origin_table = $this->_meta->table();
+		$rel_chain = '';
 
-		foreach ($paths as $iteration => $path)
+		$_with = & $this->_with;
+
+		foreach ($rel_path as $iteration => $link)
 		{
-			$field = Jelly::meta($parent)->field($path);
+			$field = Jelly::meta($parent_model)->field($link);
 
 			if ( ! $field->supports(Jelly_Field::WITH))
 			{
@@ -733,45 +740,51 @@ abstract class Jelly_Core_Builder extends Database_Query_Builder_Select
 				break;
 			}
 
-			// If we're on the first iteration, the parent path is just the
-			// name of the model, otherwise we use the chain
-			if ($iteration === 0)
-			{
-				$prev_chain = $parent;
-			}
-			else
-			{
-				$prev_chain = $chain;
-			}
-
-			$chain .= ":".$field->name;
-
-			// Set the next iteration's parent
 			$model = $field->foreign['model'];
-			$meta = Jelly::meta($model);
 
-			// Select all of the model's fields
-			foreach ($meta->fields() as $alias => $select)
+			// Check we haven't already with-ed this field on this query
+			if ( ! isset($_with[$link]))
 			{
-				if ($select->in_db)
+				$meta = Jelly::meta($model);
+
+				// Build the table alias name
+				$table_alias  = $origin_table.$rel_chain.':'.$field->name;
+				// Pre-populate the alias cache with the correct relation name.
+				$this->_model_alias(array($model, $table_alias));
+
+				// Pretend to be a different model for the benefit of the foreign field
+				$_model_backup = $this->_model;
+				$field_model_backup = $field->model;
+				$field->model = $this->_model = $origin_table.$rel_chain;
+
+				// Let the field join appropriately
+				$field->with($this);
+
+				// Take off our mask
+				$this->_model = $_model_backup;
+				$field->model = $field_model_backup;
+
+				// Build the field output alias
+				$field_alias_prefix = $rel_chain.':'.$field->name;
+				// Select all of the model's fields
+				foreach ($meta->fields() as $alias => $select)
 				{
-					// We select from the field alias rather than the model to allow multiple joins to same model
-					$this->select_column($parent.':'.$field->name.'.'.$alias, $chain.':'.$alias);
+					if ($select->in_db)
+					{
+						// We select from the field alias rather than the model to allow multiple joins to same model
+						$this->select_column($table_alias.'.'.$select->name, $field_alias_prefix.':'.$alias);
+					}
 				}
-			}
 
-			if ($parent !== $this->_model)
-			{
-				// Support for multiple with joins
-				$this->_model = $parent;
-				$field->model = $origin.':'.$field->model;
 			}
-
-			// Let the field finish the rest
-			$field->with($this);
 
 			// Model now becomes the parent
-			$parent = $model;
+			$parent_model = $model;
+			// relationshipt chain gets a bit longer
+			$rel_chain .= ':'.$link;
+			// We sink into this branch of the _with tree
+			$_with[$link] = isset($_with[$link]) ? $_with[$link] : array();
+			$_with = & $_with[$link];
 		}
 
 		return $this;
@@ -853,7 +866,15 @@ abstract class Jelly_Core_Builder extends Database_Query_Builder_Select
 		{
 			return $this->_alias_cache[$alias];
 		}
-		elseif ( ! isset($alias) and isset($this->_alias_cache[$model]))
+
+		if (strpos($model, ':') === 0)
+		{
+			$tmp = $this->_model_alias($this->_model);
+
+			$model = $tmp[1].$model;
+		}
+
+		if ( ! isset($alias) and isset($this->_alias_cache[$model]))
 		{
 			return $this->_alias_cache[$model];
 		}
@@ -868,20 +889,19 @@ abstract class Jelly_Core_Builder extends Database_Query_Builder_Select
 				$alias = $alias ? $alias : $table;
 			}
 			// Joinable field was passed, use its model
-			else if (($pos = strpos($model, ':')) !== FALSE)
+			elseif (($pos = strpos($model, ':')) !== FALSE)
 			{
-				if ($pos !== 0)
+				$chain = explode(':', $model);
+
+				$parent = array_shift($chain);
+				while ( ! empty($chain))
 				{
-					list($parent, $field) = explode(':', $model, 2);
-				}
-				else
-				{
-					$field = substr($model, 1);
-					$parent = $this->_model;
+					$field = array_shift($chain);
+					$parent = Jelly::meta($parent)->field($field)->foreign['model'];
 				}
 
-				$alias = $alias ? $alias : $parent.':'.$field;
-				$model = Jelly::meta($parent)->field($field)->foreign['model'];
+				$alias = $alias ? $alias : $model;
+				$model = $parent;
 				$table = Jelly::meta($model)->table();
 			}
 			// Unknown Table
@@ -894,7 +914,7 @@ abstract class Jelly_Core_Builder extends Database_Query_Builder_Select
 
 			// Cache what we've found
 			$this->_model_cache[$original] = array($table, $alias, $model);
-			$this->_alias_cache[$alias]    = $this->_model_cache[$original];
+			$this->_alias_cache[$alias]    = & $this->_model_cache[$original];
 		}
 
 		return $this->_model_cache[$original];
