@@ -25,9 +25,9 @@ abstract class Jelly_Core_Field_Integer extends Jelly_Field {
 	{
 		list($value, $return) = $this->_default($value);
 
-		if ( ! $return)
+		if ( ! $return AND ! ($value instanceof Database_Expression))
 		{
-			$value = (int) $value;
+			$value = (int)$value;
 		}
 
 		return $value;
