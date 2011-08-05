@@ -221,7 +221,7 @@ abstract class Jelly_Core_Field_Image extends Jelly_Field_File {
 			}
 		}
 
-		if ($this->transformations !== NULL)
+		if (count($this->transformations) > 0)
 		{
 			// Set image
 			$image = Image::factory($source, $this->driver);
