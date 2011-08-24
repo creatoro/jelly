@@ -9,6 +9,8 @@ class Model_Test_Alias extends Jelly_Model {
 
 	public static function initialize(Jelly_Meta $meta)
 	{
+		$meta->db(Kohana::config('unittest')->db_connection);
+
 		// All fields are aliased to different columns
 		$meta->fields(array(
 			'id'           => Jelly::field('primary', array(

@@ -78,8 +78,8 @@ abstract class Jelly_Core_Model
 		if ($key !== NULL)
 		{
 			$result = Jelly::query($this, $key)
-			     ->as_object(FALSE)
-			     ->select();
+				->as_object(FALSE)
+				->select();
 
 			// Only load if a record is found
 			if ($result)
