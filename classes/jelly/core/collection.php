@@ -113,7 +113,7 @@ abstract class Jelly_Core_Collection implements Iterator, Countable, SeekableIte
 	 *
 	 * @return  Jelly_Model|array
 	 */
-    public function current()
+	public function current()
 	{
 		// Database_Result causes errors if you call current()
 		// on an object with no results, so we check first.
@@ -240,7 +240,7 @@ abstract class Jelly_Core_Collection implements Iterator, Countable, SeekableIte
 			$model = clone $this->_model;
 
 			// Don't return models when we don't have one
-			return ($values)
+			return $values
 			        ? $model->load_values($values)
 			        : $model->clear();
 		}

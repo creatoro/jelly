@@ -84,7 +84,7 @@ abstract class Jelly_Core_Builder extends Database_Query_Builder_Select
 
 		if ( ! $model)
 		{
-			throw new Kohana_Exception(get_class($this) . ' requires $model to be set in the constructor');
+			throw new Kohana_Exception(get_class($this).' requires $model to be set in the constructor');
 		}
 
 		// Set the model and the initial from()
@@ -493,7 +493,7 @@ abstract class Jelly_Core_Builder extends Database_Query_Builder_Select
 							{
 								$add[] = array($this->_field_alias($field->model.'.'.$field->name), $field->name);
 							}
-							else if ($field->column instanceof Database_Expression)
+							elseif ($field->column instanceof Database_Expression)
 							{
 							    $add[] = array($field->column, $field->name);
 							}
@@ -570,7 +570,7 @@ abstract class Jelly_Core_Builder extends Database_Query_Builder_Select
 	{
 		$columns = func_get_args();
 
-		foreach($columns as $i => $column)
+		foreach ($columns as $i => $column)
 		{
 			if (is_array($column))
 			{
@@ -964,7 +964,7 @@ abstract class Jelly_Core_Builder extends Database_Query_Builder_Select
 		}
 
 		// We always return fields as they came
-		$join = (boolean) strpos($field, '.');
+		$join = (bool) strpos($field, '.');
 
 		// Determine the default model
 		if ( ! $join)
@@ -1003,7 +1003,7 @@ abstract class Jelly_Core_Builder extends Database_Query_Builder_Select
 			$join = $join_if_sure ? TRUE : $join;
 		}
 
-		return $join ? $alias.'.'.$column : $column;
+		return $join ? ($alias.'.'.$column) : $column;
 	}
 
 	/**
@@ -1079,7 +1079,7 @@ abstract class Jelly_Core_Builder extends Database_Query_Builder_Select
 			$type = $this->_type;
 		}
 
-		switch($type)
+		switch ($type)
 		{
 			case Database::SELECT:
 

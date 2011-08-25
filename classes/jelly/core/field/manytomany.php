@@ -163,10 +163,10 @@ abstract class Jelly_Core_Field_ManyToMany extends Jelly_Field implements Jelly_
 		if ( ! $loaded AND empty($value)) return;
 
 		// Find all current records so that we can calculate what's changed
-		$in = ($loaded) ? $this->_in($model, TRUE) : array();
+		$in = $loaded ? $this->_in($model, TRUE) : array();
 
 		// Find old relationships that must be deleted
-		if ($old = array_diff($in, (array)$value))
+		if ($old = array_diff($in, (array) $value))
 		{
 			Jelly::query($this->through['model'])
 			     ->where($this->through['fields'][0], '=', $model->id())
@@ -175,7 +175,7 @@ abstract class Jelly_Core_Field_ManyToMany extends Jelly_Field implements Jelly_
 		}
 
 		// Find new relationships that must be inserted
-		if ($new = array_diff((array)$value, $in))
+		if ($new = array_diff( (array) $value, $in))
 		{
 			foreach ($new as $new_id)
 			{

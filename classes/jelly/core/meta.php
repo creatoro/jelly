@@ -189,7 +189,7 @@ abstract class Jelly_Core_Meta
 		}
 
 		// Initialize all of the fields with their column and the model name
-		foreach($this->_fields as $column => $field)
+		foreach ($this->_fields as $column => $field)
 		{
 			// Allow aliasing fields
 			if (is_string($field))

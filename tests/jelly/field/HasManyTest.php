@@ -37,7 +37,7 @@ class Jelly_Field_HasManyTest extends Unittest_Jelly_TestCase {
 		$this->assertEquals(TRUE, $result instanceof Jelly_Collection);
 		$this->assertEquals($count, $result->count());
 		
-		foreach($result as $row)
+		foreach ($result as $row)
 		{
 			$this->assertGreaterThan(0, $row->id());
 			$this->assertTrue($row->loaded());
