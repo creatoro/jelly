@@ -2,22 +2,22 @@
 /**
  * Default auth user
  *
- * @package    Kohana/Auth
- * @author     creatoro
+ * @package	   Kohana/Auth
+ * @author	   creatoro
  * @copyright  (c) 2011 creatoro
- * @license    http://creativecommons.org/licenses/by-sa/3.0/legalcode
+ * @license	   http://creativecommons.org/licenses/by-sa/3.0/legalcode
  */
 class Model_Auth_User extends Jelly_Model {
 
 	public static function initialize(Jelly_Meta $meta)
-    {
-        // The table the model is attached to
-        $meta->table('users');
+	{
+		// The table the model is attached to
+		$meta->table('users');
 
-        // Fields defined by the model
-        $meta->fields(array(
-            'id' => Jelly::field('primary'),
-            'email' => Jelly::field('email', array(
+		// Fields defined by the model
+		$meta->fields(array(
+			'id' => Jelly::field('primary'),
+			'email' => Jelly::field('email', array(
 				'label' => 'email address',
 				'rules' => array(
 					array('not_empty'),
@@ -26,7 +26,7 @@ class Model_Auth_User extends Jelly_Model {
 				),
 				'unique' => TRUE,
 			)),
-            'username' => Jelly::field('string', array(
+			'username' => Jelly::field('string', array(
 				'label' => 'username',
 				'rules' => array(
 					array('not_empty'),
@@ -50,13 +50,13 @@ class Model_Auth_User extends Jelly_Model {
 			)),
 			'last_login' => Jelly::field('timestamp'),
 
-            // Relationships to other models
-            'user_tokens' => Jelly::field('hasmany', array(
+			// Relationships to other models
+			'user_tokens' => Jelly::field('hasmany', array(
 				'foreign' => 'user_token',
 			)),
-            'roles' => Jelly::field('manytomany'),
-        ));
-    }
+			'roles' => Jelly::field('manytomany'),
+		));
+	}
 
 	/**
 	 * Complete the login for a user by incrementing the logins and saving login timestamp
@@ -81,8 +81,8 @@ class Model_Auth_User extends Jelly_Model {
 	/**
 	 * Allows a model use both email and username as unique identifiers for login
 	 *
-	 * @param   string  unique value
-	 * @return  string  field name
+	 * @param	string	$value  unique value
+	 * @return	string	field name
 	 */
 	public function unique_key($value)
 	{
@@ -165,8 +165,8 @@ class Model_Auth_User extends Jelly_Model {
 	/**
 	 * Loads a user based on unique key.
 	 *
-	 * @param   string  $unique_key
-	 * @return  Jelly_Model
+	 * @param	string	$unique_key
+	 * @return	Jelly_Model
 	 */
 	public function get_user($unique_key)
 	{
@@ -176,7 +176,7 @@ class Model_Auth_User extends Jelly_Model {
 	/**
 	 * Deletes the tokens associated with the user.
 	 *
-	 * @param   int  $user_id
+	 * @param	int	 $user_id
 	 * @return
 	 */
 	public function delete_tokens($user_id)

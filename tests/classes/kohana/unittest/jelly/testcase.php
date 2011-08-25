@@ -15,10 +15,18 @@ class Kohana_Unittest_Jelly_TestCase extends Kohana_Unittest_Database_TestCase {
 		parent::setUpBeforeClass();
 
 		// Load config
-		$config = Kohana::config('database')->{Kohana::config('unittest')->db_connection};
+		$db = Kohana::config('unittest')->db_connection;
+		$config = Kohana::config('database')->{$db};
+		$type = $config['type'];
+
+		if ($type == 'pdo')
+		{
+			$type = explode(':', $config['connection']['dsn']);
+			$type = $type[0];
+		}
 
 		// Find file
-		$file = Kohana::find_file('tests/test_data/jelly', 'test-schema-'.$config['type'], 'sql');
+		$file = Kohana::find_file('tests/test_data/jelly', 'test-schema-'.$type, 'sql');
 
 		// Get contents
 		$file = file_get_contents($file);
@@ -35,7 +43,7 @@ class Kohana_Unittest_Jelly_TestCase extends Kohana_Unittest_Database_TestCase {
 			}
 
 			// Execute query
-			DB::query(NULL, $query)->execute();
+			DB::query(NULL, $query)->execute($db);
 		}
 	}
 
@@ -49,18 +57,29 @@ class Kohana_Unittest_Jelly_TestCase extends Kohana_Unittest_Database_TestCase {
      */
     public function getConnection()
     {
-        // Load config
-		$config = Kohana::config('database')->{Kohana::config('unittest')->db_connection};
+		// Determine the testing database
+		$db_name = Kohana::config('unittest')->db_connection;
+		// Load config
+		$config = Kohana::config('database')->$db_name;
 
-		// Set dsn
-		$dsn = Arr::get($config, 'dsn', $config['type'].':host='.$config['connection']['hostname'].';dbname='.$config['connection']['database']);
+		$db = Database::instance($db_name);
 
-		// Use MySQL connection
-		$pdo = new PDO($dsn, $config['connection']['username'], $config['connection']['password']);
+		if ($db instanceof Database_PDO)
+		{
+			// With in-memory databases we can't reconnect to the database, because it'll create a new one.
+			$db->connect();
+			$pdo = $db->connection();
+		}
+		else
+		{
+			// Use MySQL connection
+			$dsn = Arr::path($config, 'connection.dsn', $config['type'].':host='.$config['connection']['hostname'].';dbname='.$config['connection']['database']);
+			$pdo = new PDO($dsn, $config['connection']['username'], $config['connection']['password']);
+		}
 
 		// Create connection
 		// IMPORTANT: database has to be set in config, even for PDO
-		return $this->createDefaultDBConnection($pdo, $config['connection']['database']);
+		return $this->conn = $this->createDefaultDBConnection($pdo, $config['connection']['database']);
     }
 
     /**

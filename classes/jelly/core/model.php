@@ -78,8 +78,8 @@ abstract class Jelly_Core_Model
 		if ($key !== NULL)
 		{
 			$result = Jelly::query($this, $key)
-			     ->as_object(FALSE)
-			     ->select();
+				->as_object(FALSE)
+				->select();
 
 			// Only load if a record is found
 			if ($result)
@@ -184,7 +184,7 @@ abstract class Jelly_Core_Model
 	 */
 	public function __isset($name)
 	{
-		return (bool)($this->_meta->field($name) OR array_key_exists($name, $this->_unmapped));
+		return (bool) ($this->_meta->field($name) OR array_key_exists($name, $this->_unmapped));
 	}
 
 	/**
@@ -294,7 +294,7 @@ abstract class Jelly_Core_Model
 		$fields = $fields ? $fields : array_keys($this->_meta->fields());
 		$result = array();
 
-		foreach($fields as $field)
+		foreach ($fields as $field)
 		{
 			$result[$field] = $this->__get($field);
 		}
@@ -326,7 +326,7 @@ abstract class Jelly_Core_Model
 			$values = array($values => $value);
 		}
 
-		foreach($values as $key => $value)
+		foreach ($values as $key => $value)
 		{
 			$field = $this->_meta->field($key);
 
@@ -478,7 +478,7 @@ abstract class Jelly_Core_Model
 		// Clear the object
 		$this->clear();
 
-		foreach($values as $key => $value)
+		foreach ($values as $key => $value)
 		{
 			// Key is coming from a with statement
 			if (substr($key, 0, 1) === ':')
@@ -536,7 +536,7 @@ abstract class Jelly_Core_Model
 		$extra_errors = ($extra_validation instanceof Validation AND ! $extra_validation->check());
 
 		// For loaded models, we're only checking what's changed, otherwise we check it all
-		$data = ($key) ? $this->_changed : $this->_changed + $this->_original;
+		$data = $key ? $this->_changed : ($this->_changed + $this->_original);
 
 		// Always build a new validation object
 		$this->_validation($data, (bool) $key);
@@ -610,7 +610,7 @@ abstract class Jelly_Core_Model
 		$values = $saveable = array();
 
 		// Trigger callbacks and ensure we should proceed
-		if (FALSE === $this->_meta->events()->trigger('model.before_save', $this))
+		if ($this->_meta->events()->trigger('model.before_save', $this) === FALSE)
 		{
 			return $this;
 		}
@@ -633,7 +633,7 @@ abstract class Jelly_Core_Model
 					$values[$field->name] = $value;
 				}
 				// Or if we're INSERTing and we need to set the defaults for the first time
-				else if ( ! $key AND ! $this->changed($field->name) AND ! $field->primary)
+				elseif ( ! $key AND ! $this->changed($field->name) AND ! $field->primary)
 				{
 					$values[$field->name] = $field->default;
 				}
@@ -727,7 +727,7 @@ abstract class Jelly_Core_Model
 		// Clear the object so it appears deleted anyway
 		$this->clear();
 
-		return (boolean) $result;
+		return (bool) $result;
 	}
 
 	/**
@@ -962,7 +962,7 @@ abstract class Jelly_Core_Model
 		// Handle Database Results
 		if ($models instanceof Iterator OR is_array($models))
 		{
-			foreach($models as $row)
+			foreach ($models as $row)
 			{
 				if (is_object($row))
 				{

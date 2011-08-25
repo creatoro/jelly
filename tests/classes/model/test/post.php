@@ -9,6 +9,8 @@ class Model_Test_Post extends Jelly_Model {
 
 	public static function initialize(Jelly_Meta $meta)
 	{
+		$meta->db(Kohana::config('unittest')->db_connection);
+
 		// Posts always load_with an author
 		$meta->load_with(array('test_author'));
 

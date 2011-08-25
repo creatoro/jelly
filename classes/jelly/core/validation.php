@@ -12,7 +12,7 @@ abstract class Jelly_Core_Validation extends Validation
 	/**
 	 * Creates a new Validation instance.
 	 *
-	 * @param   array   array to use for validation
+	 * @param   array	$array	array to use for validation
 	 * @return  Validation
 	 */
 	public static function factory(array $array)

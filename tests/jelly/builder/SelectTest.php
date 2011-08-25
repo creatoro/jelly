@@ -56,11 +56,13 @@ class Jelly_Builder_SelectTest extends Unittest_Jelly_TestCase {
 	 */
 	public function test_multiple_select($result, $count, $is_model = TRUE)
 	{
+		$db = Kohana::config('unittest')->db_connection;
+
 		// Ensure the count matches a count() query
-		$this->assertEquals($result->count(), $count);
+		$this->assertEquals($result->count($db), $count);
 
 		// We can now get our collection
-		$result = $result->select();
+		$result = $result->select($db);
 
 		// Ensure we have a collection and our counts match
 		$this->assertTrue($result instanceof Jelly_Collection);

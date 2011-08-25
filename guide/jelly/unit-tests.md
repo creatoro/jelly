@@ -28,12 +28,20 @@ To do this find the *MODPATH/jelly/tests/test_data/jelly/test-schema-**YOUR DATA
 
 Using our example we would rename the **test-schema-sqlite.sql** to **test-schema-pdo_sqlite.sql**.
 
-### Set identifier for SQLite
+### Set identifier for SQLite {#sqlite_ident}
 
-In your SQLite driver (which extends Kohana's `Kohana_Database_PDO` class) set the identifier for quoting as follows.
-Failing to do this will break the `with()` queries.
+When using SQLite through the PDO driver it is necessary to set the quoting identifier in your database config file.
+Failing to do this will cause various SQL syntax errors.
 
-	protected $_identifier = '`';
+	'unittest' => array
+	(
+		'type'       => 'pdo',
+		'connection' => array(
+			...
+		),
+		...
+		'identifier' => '`',
+	),
 
 ## The test workflow
 
@@ -43,3 +51,9 @@ To get a better understanding of how tests work read the following points about 
 2. connection is set up to the database
 3. data is inserted into the database from *MODPATH/jelly/tests/test_data/jelly/test.xml*
 4. tests are run
+
+## Troubleshooting
+
+### SQL Syntax Errors
+
+If you are using PDO and SQLite, please check that you have [set the quoting identifier](#sqlite_ident).

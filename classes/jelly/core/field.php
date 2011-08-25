@@ -328,7 +328,7 @@ abstract class Jelly_Core_Field {
 		// Handle Database Results
 		if ($models instanceof Iterator OR is_array($models))
 		{
-			foreach($models as $row)
+			foreach ($models as $row)
 			{
 				if (is_object($row))
 				{

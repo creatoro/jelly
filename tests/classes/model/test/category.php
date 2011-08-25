@@ -9,6 +9,8 @@ class Model_Test_Category extends Jelly_Model {
 
 	public static function initialize(Jelly_Meta $meta)
 	{
+		$meta->db(Kohana::config('unittest')->db_connection);
+
 		$meta->fields(array(
 			'id'         => Jelly::field('primary'),
 			'name'       => Jelly::field('string'),

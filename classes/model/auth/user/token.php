@@ -2,21 +2,21 @@
 /**
  * Default auth user toke
  *
- * @package    Kohana/Auth
- * @author     creatoro
+ * @package	   Kohana/Auth
+ * @author	   creatoro
  * @copyright  (c) 2011 creatoro
- * @license    http://creativecommons.org/licenses/by-sa/3.0/legalcode
+ * @license	   http://creativecommons.org/licenses/by-sa/3.0/legalcode
  */
 class Model_Auth_User_Token extends Jelly_Model {
 
 	public static function initialize(Jelly_Meta $meta)
-    {
-        // The table the model is attached to
-        $meta->table('user_tokens');
+	{
+		// The table the model is attached to
+		$meta->table('user_tokens');
 
-        // Fields defined by the model
-        $meta->fields(array(
-            'id' => Jelly::field('primary'),
+		// Fields defined by the model
+		$meta->fields(array(
+			'id' => Jelly::field('primary'),
 			'user_agent' => Jelly::field('string'),
 			'token' => Jelly::field('string', array(
 				'unique' => TRUE,
@@ -27,15 +27,15 @@ class Model_Auth_User_Token extends Jelly_Model {
 			)),
 			'expires' => Jelly::field('timestamp'),
 
-            // Relationships to other models
-            'user' => Jelly::field('belongsto'),
-        ));
-    }
+			// Relationships to other models
+			'user' => Jelly::field('belongsto'),
+		));
+	}
 
 	/**
 	 * Handles garbage collection and deleting of expired objects.
 	 *
-	 * @return  void
+	 * @return	void
 	 */
 	public function __construct($id = NULL)
 	{
@@ -57,7 +57,7 @@ class Model_Auth_User_Token extends Jelly_Model {
 	/**
 	 * Deletes all expired tokens.
 	 *
-	 * @return  Jelly
+	 * @return	Jelly
 	 */
 	public function delete_expired()
 	{
@@ -72,8 +72,8 @@ class Model_Auth_User_Token extends Jelly_Model {
 	/**
 	 * Creates a new token.
 	 *
-	 * @param   array  $data
-	 * @return  Jelly_Model
+	 * @param	array  $data
+	 * @return	Jelly_Model
 	 */
 	public function create_token(array $data)
 	{
@@ -82,7 +82,7 @@ class Model_Auth_User_Token extends Jelly_Model {
 		{
 			$token = sha1(uniqid(Text::random('alnum', 32), TRUE));
 		}
-		while($this->get_token($token)->loaded());
+		while ($this->get_token($token)->loaded());
 
 		// Store token in database
 		return $this->set(array(
@@ -96,8 +96,8 @@ class Model_Auth_User_Token extends Jelly_Model {
 	/**
 	 * Loads a token.
 	 *
-	 * @param   string  $token
-	 * @return  Jelly_Model
+	 * @param	string	$token
+	 * @return	Jelly_Model
 	 */
 	public function get_token($token)
 	{

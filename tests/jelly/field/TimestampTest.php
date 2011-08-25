@@ -51,7 +51,7 @@ class Jelly_Field_TimestampTest extends Unittest_TestCase {
 		$post->save();
 
 		// Test timestamp has been set on create
-		$this->assertType('integer', $post->created);
+		$this->assertInternalType('integer', $post->created);
 		$this->assertGreaterThanOrEqual($time, $post->created);
 
 		// Store created so we can prove it doesn't change on update
@@ -60,7 +60,7 @@ class Jelly_Field_TimestampTest extends Unittest_TestCase {
 		sleep(1); // Wait one second to ensure the next tests are valid
 		$post->save();
 
-		$this->assertType('integer', $post->updated);
+		$this->assertInternalType('integer', $post->updated);
 		$this->assertGreaterThan($post->created, $post->updated);
 		$this->assertEquals($created, $post->created);
 
