@@ -143,6 +143,12 @@ abstract class Jelly_Core_Meta {
 
 		// Set the name of a possible behavior class
 		$behavior_class = Jelly::behavior_prefix().$model;
+		
+		// Set PSR-0 class name
+		$behavior_class = strtolower($behavior_class);
+		$behavior_class = str_replace('_', ' ', $behavior_class);
+		$behavior_class = ucwords($behavior_class);
+		$behavior_class = str_replace(' ', '_', $behavior_class);
 
 		// See if we have a special behavior class to use
 		if (class_exists($behavior_class))
