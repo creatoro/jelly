@@ -67,7 +67,7 @@ abstract class Jelly_Core_Field_HasMany extends Jelly_Field implements Jelly_Fie
 		// of this field, and the field defaults to this field's model's foreign key
 		if (empty($this->foreign))
 		{
-			$this->foreign = inflector::singular($this->name).'.'.$model.':foreign_key';
+			$this->foreign = Inflector::singular($this->name).'.'.$model.':foreign_key';
 		}
 		// We have a model? Default the field to this field's model's foreign key
 		elseif (FALSE === strpos($this->foreign, '.'))

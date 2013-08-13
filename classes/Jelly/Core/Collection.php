@@ -91,7 +91,7 @@ abstract class Jelly_Core_Collection implements Iterator, Countable, SeekableIte
 	}
 
 	/**
-	 * Return all of the rows in the result as an array.
+	 * Return all of the models in array.
 	 *
 	 * @param   string  $key   column for associative keys
 	 * @param   string  $value column for values
@@ -99,7 +99,31 @@ abstract class Jelly_Core_Collection implements Iterator, Countable, SeekableIte
 	 */
 	public function as_array($key = NULL, $value = NULL)
 	{
-		return $this->_result->as_array($key, $value);
+		if ($value === NULL)
+		{
+			$result = array();
+
+			if ($key === NULL)
+			{
+				foreach ($this as $obj)
+				{
+					$result[] = $obj;
+				}
+			}
+			else
+			{
+				foreach ($this as $obj)
+				{
+					$result[$obj->$key] = $obj;
+				}
+			}
+
+			return $result;
+		}
+		else
+		{
+			return $this->_result->as_array($key, $value);
+		}
 	}
 
 	/**

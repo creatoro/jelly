@@ -296,7 +296,7 @@ abstract class Jelly_Core_Builder extends Database_Query_Builder_Select {
 
 		// Find the count
 		$result = (int) $query
-		               ->select(array('COUNT("*")', 'total'))
+		               ->select(array(DB::expr('COUNT(*)'), 'total'))
 		               ->execute($db)
 		               ->get('total');
 
@@ -337,7 +337,7 @@ abstract class Jelly_Core_Builder extends Database_Query_Builder_Select {
 	 * @param  string|null  $type
 	 * @return string
 	 */
-	public function compile(Database $db, $type = NULL)
+	public function compile($db = NULL, $type = NULL)
 	{
 		$type === NULL AND $type = $this->_type;
 
@@ -1009,6 +1009,28 @@ abstract class Jelly_Core_Builder extends Database_Query_Builder_Select {
 		}
 
 		return $join ? ($alias.'.'.$column) : $column;
+	}
+
+	public function field_alias($field)
+	{
+		return $this->_field_alias($field);
+	}
+
+	/**
+	 * Return table name in query, table alias and table model
+	 *
+	 * @param $field
+	 * @return mixed
+	 */
+	public function with_alias($field)
+	{
+		$field = $this->_meta->field($field);
+
+		$table = $this->_meta->table();
+
+		$key = $field->foreign['model'].'.'.$table.':'.$field->name;
+
+		return $this->_model_cache[$key];
 	}
 
 	/**

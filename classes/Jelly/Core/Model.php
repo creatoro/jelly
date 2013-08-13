@@ -266,6 +266,36 @@ abstract class Jelly_Core_Model {
 	}
 
 	/**
+	 * Gets the value from db for a field, no relationships supports,
+	 * returned raw data only.
+	 *
+	 * @param   string       $name The field's name
+	 * @return  string
+	 */
+	public function get_raw($name)
+	{
+		if ($field = $this->_meta->field($name))
+		{
+			// Alias the name to its actual name
+			$name = $field->name;
+
+			if (array_key_exists($name, $this->_changed))
+			{
+				return $this->_changed[$name];
+			}
+			else
+			{
+				return $this->original_raw($name);
+			}
+		}
+		// Return unmapped data from custom queries
+		elseif (isset($this->_unmapped[$name]))
+		{
+			return $this->_unmapped[$name];
+		}
+	}
+
+	/**
 	 * Returns the original value of a field, before it was changed.
 	 *
 	 * This method—combined with get(), which first searches for changed
@@ -280,6 +310,22 @@ abstract class Jelly_Core_Model {
 		{
 			// Alias the name to its actual name
 			return $field->get($this, $this->_original[$field->name]);
+		}
+	}
+
+	/**
+	 * Returns the original value of a field, before it was changed,
+	 * no relationships supports, returned raw data only.
+	 *
+	 * @param   string  $field The field's or alias name
+	 * @return  string
+	 */
+	public function original_raw($field)
+	{
+		if ($field = $this->_meta->field($field))
+		{
+			// Alias the name to its actual name
+			return $this->_original[$field->name];
 		}
 	}
 
@@ -633,7 +679,7 @@ abstract class Jelly_Core_Model {
 				$value = $field->save($this, $value, $key);
 
 				// Only set the value to be saved if it's changed from the original
-				if ($value !== $this->_original[$column])
+				if ($field->set($value) !== $this->_original[$column])
 				{
 					$values[$field->name] = $value;
 				}
